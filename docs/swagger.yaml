@@ -1,0 +1,85 @@
+basePath: /
+definitions:
+  models.StatEntry:
+    properties:
+      ts:
+        example: 2024-01-01T00:00:00
+        type: string
+      v:
+        example: 5
+        type: integer
+    type: object
+  models.StatsRequest:
+    properties:
+      from:
+        example: 2024-01-01T00:00:00
+        type: string
+      to:
+        example: 2024-01-02T00:00:00
+        type: string
+    type: object
+  models.StatsResponse:
+    properties:
+      stats:
+        items:
+          $ref: '#/definitions/models.StatEntry'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Simple banner click tracking API
+  title: Banner API
+  version: "1.0"
+paths:
+  /counter/{bannerID}:
+    get:
+      description: Increments click counter for specified banner
+      parameters:
+      - description: Banner ID
+        in: path
+        name: bannerID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Click registered successfully
+        "400":
+          description: Invalid banner ID
+        "404":
+          description: Banner not found
+        "500":
+          description: Internal server error
+      summary: Register banner click
+      tags:
+      - banners
+  /stats/{bannerID}:
+    post:
+      description: Returns click statistics for specified banner within time range
+      parameters:
+      - description: Banner ID
+        in: path
+        name: bannerID
+        required: true
+        type: integer
+      - description: Time range
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.StatsRequest'
+      responses:
+        "200":
+          description: Statistics data
+          schema:
+            $ref: '#/definitions/models.StatsResponse'
+        "400":
+          description: Invalid request
+        "404":
+          description: Banner not found
+        "500":
+          description: Internal server error
+      summary: Get banner statistics
+      tags:
+      - banners
+swagger: "2.0"
